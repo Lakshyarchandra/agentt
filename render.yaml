@@ -6,6 +6,7 @@ services:
   - type: web
     name: agent-studio-api
     runtime: python
+    runtimeVersion: 3.12
     region: oregon
     plan: free
     rootDir: backend
