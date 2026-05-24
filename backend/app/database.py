@@ -19,12 +19,18 @@ def _make_async_url(url: str) -> str:
     return url
 
 
+# Configure connection arguments (e.g. SSL requirement for remote databases in prod)
+connect_args = {}
+if not settings.DEBUG and all(x not in settings.DATABASE_URL for x in ("localhost", "127.0.0.1", "db")):
+    connect_args["ssl"] = True
+
 engine = create_async_engine(
     _make_async_url(settings.DATABASE_URL),
     echo=settings.DEBUG,
     pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    pool_size=5,
+    max_overflow=5,
+    connect_args=connect_args,
 )
 
 AsyncSessionLocal = async_sessionmaker(

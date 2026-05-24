@@ -11,8 +11,20 @@ import app.models  # noqa: F401 — ensure models are imported for Alembic
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Create tables if not using Alembic in dev
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        import traceback
+        import sys
+        print("=" * 80, file=sys.stderr)
+        print("DATABASE CREATION ERROR OCCURRED ON STARTUP:", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        if hasattr(e, "orig"):
+            print(f"ORIGINAL DATABASE ERROR: {e.orig}", file=sys.stderr)
+            print(f"ORIGINAL DATABASE ERROR ARGS: {getattr(e.orig, 'args', None)}", file=sys.stderr)
+        print("=" * 80, file=sys.stderr)
+        raise e
     yield
     await engine.dispose()
 
