@@ -37,7 +37,7 @@ services:
       - key: DEBUG
         value: "false"
       - key: CORS_ORIGINS
-        sync: false   # e.g. ["https://agent-studio-ui.onrender.com"]
+        value: '["https://agent-studio-frontend.onrender.com"]'
 
   # ─── Frontend Static Site (Vite/React) ───────────────────────────────────────
   # Note: static sites do NOT support region or plan fields
@@ -49,7 +49,7 @@ services:
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
-        sync: false   # Set to backend URL e.g. https://agent-studio-api.onrender.com/api/v1
+        value: https://agent-studio-api.onrender.com/api/v1
     routes:
       - type: rewrite
         source: /*
