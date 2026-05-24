@@ -7,7 +7,7 @@ const VENDOR_MODELS: Record<string, string[]> = {
   google: ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'],
   mistral: ['mistral-small-latest', 'open-mistral-nemo', 'mistral-large-latest'],
   ollama: ['llama3.2', 'phi3', 'qwen2.5', 'mistral', 'gemma2'],
-  openrouter: ['meta-llama/llama-3.3-70b:free', 'mistralai/mistral-7b-instruct:free', 'microsoft/phi-3-mini-128k-instruct:free', 'google/gemma-3-27b-it:free'],
+  openrouter: ['openrouter/free', 'meta-llama/llama-3.3-70b-instruct:free', 'deepseek/deepseek-v4-flash:free', 'google/gemma-4-31b-it:free', 'meta-llama/llama-3.2-3b-instruct:free'],
 };
 
 export default function LLMNode({ data, selected }: NodeProps) {

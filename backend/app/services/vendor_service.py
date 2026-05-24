@@ -37,10 +37,11 @@ VENDOR_MODELS: Dict[str, list] = {
         "gemma2",
     ],
     "openrouter": [
-        "meta-llama/llama-3.3-70b:free",
-        "mistralai/mistral-7b-instruct:free",
-        "microsoft/phi-3-mini-128k-instruct:free",
-        "google/gemma-3-27b-it:free",
+        "openrouter/free",
+        "meta-llama/llama-3.3-70b-instruct:free",
+        "deepseek/deepseek-v4-flash:free",
+        "google/gemma-4-31b-it:free",
+        "meta-llama/llama-3.2-3b-instruct:free",
     ],
 }
 
@@ -106,6 +107,13 @@ def create_llm(
             max_tokens=max_tokens,
             openai_api_key=api_keys.get("openrouter", ""),
             openai_api_base="https://openrouter.ai/api/v1",
+            model_kwargs={
+                "extra_body": {
+                    "provider": {
+                        "ignore": ["Crucible"]
+                    }
+                }
+            }
         )
 
     else:
