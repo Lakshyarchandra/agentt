@@ -8,7 +8,6 @@ services:
     runtime: python
     region: oregon
     plan: free
-    pythonVersion: "3.12.10"
     rootDir: backend
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: >-
