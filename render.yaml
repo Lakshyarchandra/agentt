@@ -1,8 +1,8 @@
 # ─── Render.com Deployment Manifest ───────────────────────────────────────────
-# Deploy: push to GitHub and connect to Render, or use: render blueprint launch
+# Deploy: push to GitHub, connect repo in Render dashboard, then click "Apply"
 
 services:
-  # ─── Backend API ─────────────────────────────────────────────────────────────
+  # ─── Backend API (Python Web Service) ────────────────────────────────────────
   - type: web
     name: agent-studio-api
     runtime: python
@@ -10,7 +10,7 @@ services:
     plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: >
+    startCommand: >-
       gunicorn app.main:app
       --workers 2
       --worker-class uvicorn.workers.UvicornWorker
@@ -23,11 +23,11 @@ services:
           name: agent-studio-db
           property: connectionString
       - key: REDIS_URL
-        sync: false   # Set manually in Render dashboard (Upstash Redis URL)
+        sync: false   # Set manually in Render dashboard (Upstash free Redis URL)
       - key: SECRET_KEY
         generateValue: true
       - key: ENCRYPTION_KEY
-        sync: false   # Set manually — use: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+        sync: false   # Run: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
       - key: ALGORITHM
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
@@ -37,20 +37,19 @@ services:
       - key: DEBUG
         value: "false"
       - key: CORS_ORIGINS
-        sync: false   # Set to your frontend URL, e.g. ["https://agent-studio-ui.onrender.com"]
+        sync: false   # e.g. ["https://agent-studio-ui.onrender.com"]
 
-  # ─── Frontend Static Site ────────────────────────────────────────────────────
+  # ─── Frontend Static Site (Vite/React) ───────────────────────────────────────
+  # Note: static sites do NOT support region or plan fields
   - type: web
     name: agent-studio-ui
     runtime: static
-    region: oregon
-    plan: free
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
-        sync: false   # Set to your backend URL, e.g. https://agent-studio-api.onrender.com/api/v1
+        sync: false   # Set to backend URL e.g. https://agent-studio-api.onrender.com/api/v1
     routes:
       - type: rewrite
         source: /*
