@@ -95,19 +95,6 @@ agentt/
 
 ---
 
-## 🌐 Deploy to Render
-
-1. Push to GitHub
-2. Go to [dashboard.render.com](https://dashboard.render.com) → New → Blueprint
-3. Point to your repo — Render will detect `render.yaml`
-4. Set these env vars manually in the Render dashboard:
-   - `ENCRYPTION_KEY` — from Fernet.generate_key()
-   - `REDIS_URL` — from Upstash Redis (free tier)
-   - `CORS_ORIGINS` — your frontend URL
-   - `VITE_API_URL` — your backend URL (on the frontend service)
-
----
-
 ## 📡 API Endpoints
 
 | Method | Endpoint | Description |
