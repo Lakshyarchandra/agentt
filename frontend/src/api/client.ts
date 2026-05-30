@@ -74,6 +74,21 @@ export const tracesApi = {
   delete: (id: string) => client.delete(`/traces/${id}`),
 };
 
+// ─── Custom Tools API (v2) ───────────────────────────────────────────────────
+export const customToolsApi = {
+  list: () => client.get('/tools'),
+  create: (data: { name: string; code?: string; description?: string; language?: string; is_agent_tool?: boolean }) =>
+    client.post('/tools', data),
+  get: (id: string) => client.get(`/tools/${id}`),
+  update: (id: string, data: { name?: string; description?: string; code?: string; is_agent_tool?: boolean }) =>
+    client.put(`/tools/${id}`, data),
+  delete: (id: string) => client.delete(`/tools/${id}`),
+  execute: (id: string, data: { code?: string }) =>
+    client.post(`/tools/${id}/execute`, data),
+  executePlayground: (data: { code: string; language?: string }) =>
+    client.post('/tools/execute/playground', data),
+};
+
 // ─── WebSocket URL ────────────────────────────────────────────────────────────
 export const getWsUrl = (agentId: string): string => {
   const token = localStorage.getItem('access_token') || '';

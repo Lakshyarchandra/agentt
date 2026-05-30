@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Bot, LayoutDashboard, History, Settings, LogOut } from 'lucide-react';
+import { Bot, LayoutDashboard, History, Settings, LogOut, Code } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 export default function Navbar() {
@@ -24,6 +24,10 @@ export default function Navbar() {
         <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           <LayoutDashboard size={15} />
           Dashboard
+        </NavLink>
+        <NavLink to="/tools" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <Code size={15} />
+          Tools
         </NavLink>
         <NavLink to="/traces" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
           <History size={15} />

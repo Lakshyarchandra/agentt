@@ -37,7 +37,7 @@ services:
       - key: DEBUG
         value: "false"
       - key: CORS_ORIGINS
-        value: '["https://agent-studio-frontend.onrender.com"]'
+        value: '["https://agent-studio-frontend-zdmv.onrender.com","http://localhost:3000","http://localhost:5173","http://localhost:5174"]'
 
   # ─── Frontend Static Site (Vite/React) ───────────────────────────────────────
   # Note: static sites do NOT support region or plan fields
@@ -49,7 +49,7 @@ services:
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
-        value: https://agent-studio-api.onrender.com/api/v1
+        value: https://agent-studio-api-zdmv.onrender.com/api/v1
     routes:
       - type: rewrite
         source: /*

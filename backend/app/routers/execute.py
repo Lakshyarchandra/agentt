@@ -10,12 +10,31 @@ from app.database import get_db, AsyncSessionLocal
 from app.models.user import User
 from app.models.agent import Agent
 from app.models.trace import ExecutionTrace
+from app.models.custom_tool import CustomTool
 from app.schemas.trace import ExecuteRequest, TraceOut
 from app.core.deps import get_current_user, get_current_user_ws
 from app.core.security import decrypt_api_keys
 from app.services.agent_service import execute_graph, StreamingCallback
+from app.services.custom_tool_service import create_langchain_tool_from_custom
 
 router = APIRouter(tags=["execute"])
+
+
+async def _get_custom_tools(user_id, db: AsyncSession):
+    """Fetch user's custom tools marked as agent tools and wrap as LangChain tools."""
+    result = await db.execute(
+        select(CustomTool).where(
+            CustomTool.owner_id == user_id,
+            CustomTool.is_agent_tool == True,
+        )
+    )
+    custom_tools = result.scalars().all()
+    lc_tools = []
+    for ct in custom_tools:
+        lc_tools.append(
+            create_langchain_tool_from_custom(ct.name, ct.description or "", ct.code)
+        )
+    return lc_tools
 
 
 # ─── REST Execution (non-streaming) ──────────────────────────────────────────
@@ -29,6 +48,7 @@ async def execute_agent_rest(
 ):
     agent = await _get_agent(agent_id, current_user.id, db)
     api_keys = decrypt_api_keys(current_user.encrypted_api_keys or "")
+    custom_tools = await _get_custom_tools(current_user.id, db)
 
     trace = ExecutionTrace(
         agent_id=agent.id,
@@ -47,12 +67,21 @@ async def execute_agent_rest(
             api_keys=api_keys,
             max_iterations=int(agent.max_iterations),
             callback=callback,
+            timeout_seconds=int(agent.timeout_seconds),
+            retry_config=agent.retry_config or {},
+            fallback_config=agent.fallback_config or {},
+            structured_output_schema=agent.structured_output_schema,
+            custom_tools=custom_tools,
         )
         trace.output_text = result["output"]
         trace.steps = result["steps"]
         trace.duration_ms = result["duration_ms"]
         trace.tokens_used = result.get("tokens_used")
         trace.status = "completed"
+        trace.completed_at = datetime.utcnow()
+    except TimeoutError:
+        trace.status = "timeout"
+        trace.error_message = "Execution timed out"
         trace.completed_at = datetime.utcnow()
     except Exception as e:
         trace.status = "failed"
@@ -98,6 +127,7 @@ async def execute_agent_ws(
             return
 
         api_keys = decrypt_api_keys(user.encrypted_api_keys or "")
+        custom_tools = await _get_custom_tools(user.id, db)
 
         # Create trace record
         trace = ExecutionTrace(
@@ -128,6 +158,11 @@ async def execute_agent_ws(
                 api_keys=api_keys,
                 max_iterations=int(agent.max_iterations),
                 callback=callback,
+                timeout_seconds=int(agent.timeout_seconds),
+                retry_config=agent.retry_config or {},
+                fallback_config=agent.fallback_config or {},
+                structured_output_schema=agent.structured_output_schema,
+                custom_tools=custom_tools,
             )
         )
 
@@ -159,6 +194,10 @@ async def execute_agent_ws(
                     saved_trace.steps = result["steps"]
                     saved_trace.duration_ms = result["duration_ms"]
                     saved_trace.status = "completed"
+                    saved_trace.completed_at = datetime.utcnow()
+                except TimeoutError:
+                    saved_trace.status = "timeout"
+                    saved_trace.error_message = "Execution timed out"
                     saved_trace.completed_at = datetime.utcnow()
                 except Exception as e:
                     saved_trace.status = "failed"

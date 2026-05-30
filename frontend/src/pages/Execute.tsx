@@ -93,6 +93,15 @@ export default function Execute() {
           setRunning(false);
           toast.error('Execution failed');
           break;
+        case 'condition':
+          setSteps((prev) => [...prev, { type: 'condition', ...msg.data, timestamp: new Date().toISOString() } as TraceStep]);
+          break;
+        case 'retry':
+          setSteps((prev) => [...prev, { type: 'retry', ...msg.data, output: `Attempt ${msg.data.attempt}: ${msg.data.error}`, timestamp: new Date().toISOString() } as TraceStep]);
+          break;
+        case 'fallback':
+          setSteps((prev) => [...prev, { type: 'fallback', ...msg.data, output: `Switching to fallback model`, timestamp: new Date().toISOString() } as TraceStep]);
+          break;
       }
     };
 
@@ -115,6 +124,9 @@ export default function Execute() {
     tool_call:    { bg: 'rgba(6,182,212,0.15)',   color: '#67e8f9', label: 'Tool' },
     observation:  { bg: 'rgba(16,185,129,0.15)',  color: '#34d399', label: 'Obs' },
     error:        { bg: 'rgba(239,68,68,0.15)',   color: '#fca5a5', label: 'Error' },
+    condition:    { bg: 'rgba(251,146,60,0.15)',  color: '#fdba74', label: 'Condition' },
+    retry:        { bg: 'rgba(245,158,11,0.15)',  color: '#fcd34d', label: 'Retry' },
+    fallback:     { bg: 'rgba(168,85,247,0.15)',  color: '#c084fc', label: 'Fallback' },
   };
 
   return (

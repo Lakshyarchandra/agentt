@@ -26,6 +26,13 @@ class Agent(Base):
     max_iterations = Column(String(10), default="10")
     timeout_seconds = Column(String(10), default="120")
 
+    # v2: Retry config — { "max_retries": 3, "backoff_multiplier": 1.5 }
+    retry_config = Column(JSONB, nullable=True, default=dict)
+    # v2: Fallback model — { "vendor": "...", "model": "..." }
+    fallback_config = Column(JSONB, nullable=True, default=dict)
+    # v2: Structured output — JSON Schema definition
+    structured_output_schema = Column(JSONB, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

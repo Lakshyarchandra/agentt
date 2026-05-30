@@ -38,6 +38,9 @@ async def create_agent(
         graph_config=payload.graph_config.model_dump(),
         max_iterations=payload.max_iterations,
         timeout_seconds=payload.timeout_seconds,
+        retry_config=payload.retry_config or {},
+        fallback_config=payload.fallback_config or {},
+        structured_output_schema=payload.structured_output_schema,
     )
     db.add(agent)
     await db.flush()
@@ -93,6 +96,12 @@ async def update_agent(
         agent.timeout_seconds = payload.timeout_seconds
     if payload.is_active is not None:
         agent.is_active = payload.is_active
+    if payload.retry_config is not None:
+        agent.retry_config = payload.retry_config
+    if payload.fallback_config is not None:
+        agent.fallback_config = payload.fallback_config
+    if payload.structured_output_schema is not None:
+        agent.structured_output_schema = payload.structured_output_schema
 
     db.add(agent)
     return agent

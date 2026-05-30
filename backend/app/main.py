@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.config import settings
 from app.database import engine, Base
-from app.routers import auth, agents, execute, traces
+from app.routers import auth, agents, execute, traces, custom_tools
 import app.models  # noqa: F401 — ensure models are imported for Alembic
 
 
@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    version="1.0.0",
+    version="2.0.0",
     description="Visual AI Agent Builder — create, edit, and execute LangChain agents",
     lifespan=lifespan,
 )
@@ -50,6 +50,7 @@ app.include_router(auth, prefix=settings.API_V1_STR)
 app.include_router(agents, prefix=settings.API_V1_STR)
 app.include_router(execute, prefix=settings.API_V1_STR)
 app.include_router(traces, prefix=settings.API_V1_STR)
+app.include_router(custom_tools, prefix=settings.API_V1_STR)
 
 
 @app.get("/health")

@@ -11,7 +11,7 @@ class NodePosition(BaseModel):
 
 class FlowNode(BaseModel):
     id: str
-    type: str  # input | llm | tool | prompt | output | conditional
+    type: str  # input | llm | tool | prompt | output | conditional | condition
     data: Dict[str, Any]
     position: NodePosition
 
@@ -29,12 +29,34 @@ class GraphConfig(BaseModel):
     edges: List[FlowEdge]
 
 
+# ─── v2: Retry / Fallback / Structured Output ────────────────────────────────
+
+class RetryConfig(BaseModel):
+    max_retries: int = 3
+    backoff_multiplier: float = 1.5
+
+
+class FallbackConfig(BaseModel):
+    vendor: str = ""
+    model: str = ""
+
+
+class StructuredOutputSchema(BaseModel):
+    schema_def: Dict[str, Any] = {}  # JSON Schema object
+    enabled: bool = False
+
+
+# ─── CRUD Schemas ─────────────────────────────────────────────────────────────
+
 class AgentCreate(BaseModel):
     name: str
     description: Optional[str] = None
     graph_config: GraphConfig
     max_iterations: Optional[str] = "10"
     timeout_seconds: Optional[str] = "120"
+    retry_config: Optional[Dict[str, Any]] = None
+    fallback_config: Optional[Dict[str, Any]] = None
+    structured_output_schema: Optional[Dict[str, Any]] = None
 
 
 class AgentUpdate(BaseModel):
@@ -44,6 +66,9 @@ class AgentUpdate(BaseModel):
     max_iterations: Optional[str] = None
     timeout_seconds: Optional[str] = None
     is_active: Optional[bool] = None
+    retry_config: Optional[Dict[str, Any]] = None
+    fallback_config: Optional[Dict[str, Any]] = None
+    structured_output_schema: Optional[Dict[str, Any]] = None
 
 
 class AgentOut(BaseModel):
@@ -54,6 +79,9 @@ class AgentOut(BaseModel):
     max_iterations: str
     timeout_seconds: str
     is_active: bool
+    retry_config: Optional[Dict[str, Any]]
+    fallback_config: Optional[Dict[str, Any]]
+    structured_output_schema: Optional[Dict[str, Any]]
     created_at: datetime
     updated_at: datetime
 

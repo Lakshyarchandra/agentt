@@ -23,6 +23,9 @@ export interface Agent {
   max_iterations: string;
   timeout_seconds: string;
   is_active: boolean;
+  retry_config?: Record<string, any>;
+  fallback_config?: Record<string, any>;
+  structured_output_schema?: Record<string, any>;
   created_at: string;
   updated_at: string;
 }

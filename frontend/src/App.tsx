@@ -8,6 +8,7 @@ import AgentBuilder from './pages/AgentBuilder';
 import Execute from './pages/Execute';
 import Traces from './pages/Traces';
 import Settings from './pages/Settings';
+import ToolsWorkbench from './pages/ToolsWorkbench';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -37,6 +38,7 @@ export default function App() {
                 <Route path="agents/new"           element={<AgentBuilder />} />
                 <Route path="agents/:id/edit"      element={<AgentBuilder />} />
                 <Route path="agents/:id/execute"   element={<Execute />} />
+                <Route path="tools"                element={<ToolsWorkbench />} />
                 <Route path="traces"               element={<Traces />} />
                 <Route path="settings"             element={<Settings />} />
               </Routes>

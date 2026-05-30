@@ -1,12 +1,14 @@
 """
-Tool Registry — built-in tools available to agents.
+Tool Registry — built-in tools and custom tools available to agents.
 
-Available tools:
+Available built-in tools:
   - web_search    : Tavily web search
   - wikipedia     : Wikipedia article lookup
   - calculator    : Math expression evaluator
   - python_repl   : Sandboxed Python code execution
   - http_request  : Fetch a URL and return its text content
+
+Custom tools are loaded from the database and wrapped as LangChain tools.
 """
 from typing import Optional, Dict, Any
 from langchain_core.tools import Tool
@@ -17,9 +19,19 @@ def get_tool_by_name(
     tool_config: Dict[str, Any],
     api_keys: Dict[str, str],
 ) -> Optional[Tool]:
-    """Return a LangChain Tool instance for the given tool name."""
+    """Return a LangChain Tool instance for the given tool name.
+    
+    Supports both built-in tools and custom tools.
+    For custom tools, tool_config should contain 'type': 'custom_tool' and 'custom_tool_id'.
+    """
 
     name = tool_name.lower()
+    
+    # Handle custom tools — tool_config contains custom_tool_id
+    if tool_config.get("type") == "custom_tool" or tool_config.get("custom_tool_id"):
+        # Custom tools are pre-wrapped and passed via custom_tools parameter in execute_graph
+        # This is a fallback that just logs a note
+        return None
 
     if name == "web_search":
         tavily_key = api_keys.get("tavily") or tool_config.get("api_key", "")
@@ -183,5 +195,12 @@ AVAILABLE_TOOLS = [
         "description": "Fetch text content from any URL",
         "requires_key": None,
         "icon": "Globe",
+    },
+    {
+        "name": "custom_tool",
+        "label": "Custom Tool",
+        "description": "User-defined custom tool (Python code execution)",
+        "requires_key": None,
+        "icon": "Zap",
     },
 ]

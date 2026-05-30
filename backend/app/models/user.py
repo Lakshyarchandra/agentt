@@ -21,3 +21,4 @@ class User(Base):
 
     agents = relationship("Agent", back_populates="owner", cascade="all, delete-orphan")
     traces = relationship("ExecutionTrace", back_populates="user", cascade="all, delete-orphan")
+    custom_tools = relationship("CustomTool", back_populates="owner", cascade="all, delete-orphan")
