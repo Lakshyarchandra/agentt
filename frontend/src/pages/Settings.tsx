@@ -60,7 +60,7 @@ export default function Settings() {
       </div>
 
       {/* API Keys section */}
-      <div className="card" style={{ maxWidth: 680 }}>
+      <div className="card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
           <Key size={18} color="var(--text-accent)" />
           <h3 style={{ margin: 0 }}>API Keys</h3>
@@ -140,7 +140,7 @@ export default function Settings() {
       </div>
 
       {/* Info card */}
-      <div className="card" style={{ maxWidth: 680, marginTop: '1rem', background: 'rgba(108,99,255,0.07)', border: '1px solid rgba(108,99,255,0.2)' }}>
+      <div className="card" style={{ marginTop: '1rem', background: 'rgba(108,99,255,0.07)', border: '1px solid rgba(108,99,255,0.2)' }}>
         <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
           <strong style={{ color: 'var(--text-accent)' }}>🔐 Security note:</strong> API keys are encrypted using Fernet (AES-128-CBC) before
           being stored in the database. They are decrypted in-memory only during agent execution and are never returned via the API.
