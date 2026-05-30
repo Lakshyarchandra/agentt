@@ -1,12 +1,1 @@
 backend/.env
-
-# AI planning and status files
-FEATURES_v2.md
-IMPLEMENTATION_SUMMARY.md
-PROGRESS_REPORT.md
-STATUS.md
-COMPLETION_REPORT.md
-
-# Verification scripts
-verify.bat
-verify.sh
